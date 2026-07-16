@@ -1,0 +1,13 @@
+apiVersion: v2
+name: spidersilk-app
+description: Nginx + CSV-processing app, sharing static assets via an emptyDir, exposed via Service and autoscaled with an HPA.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - nginx
+  - flask
+  - csv
+  - s3
+maintainers:
+  - name: SpiderSilk

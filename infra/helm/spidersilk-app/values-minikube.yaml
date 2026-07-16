@@ -1,0 +1,47 @@
+# Local Minikube overrides. Usage:
+#   eval $(minikube docker-env)
+#   docker build -t spidersilk-app:local ../../../app
+#   helm install spidersilk . -f values.yaml -f values-minikube.yaml
+#   minikube service spidersilk-app --url
+
+replicaCount: 1
+
+image:
+  app:
+    repository: spidersilk-app
+    tag: local
+    pullPolicy: Never   # use the image already loaded into Minikube's docker daemon
+
+service:
+  type: NodePort
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+
+resources:
+  nginx:
+    requests:
+      cpu: 10m
+      memory: 16Mi
+    limits:
+      cpu: 50m
+      memory: 32Mi
+  app:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi
+
+appConfig:
+  s3Bucket: ""   # left empty on purpose: app degrades to "S3 upload skipped" without creds
+  awsRegion: "us-east-1"
+  logLevel: "DEBUG"
+
+# Minikube's single node isn't tainted, so the spot toleration is harmless
+# but unnecessary; kept for parity with values.yaml.
+tolerations: []

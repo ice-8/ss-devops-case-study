@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "spidersilk-app.fullname" . }}
+  labels:
+    {{- include "spidersilk-app.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "spidersilk-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "spidersilk-app.selectorLabels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "spidersilk-app.serviceAccountName" . }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      # Copies the app image's static/ (css, js) into the shared emptyDir
+      # before nginx and the app start, so nginx can serve them directly.
+      # This is the "shared storage, not NFS" requirement — emptyDir is
+      # pod-local, no external dependency.
+      initContainers:
+        - name: static-sync
+          image: "{{ .Values.image.app.repository }}:{{ .Values.image.app.tag }}"
+          imagePullPolicy: {{ .Values.image.app.pullPolicy }}
+          command: ["sh", "-c", "cp -r /app/static/. /shared/static/"]
+          volumeMounts:
+            - name: shared-static
+              mountPath: /shared/static
+
+      containers:
+        - name: nginx
+          image: "{{ .Values.image.nginx.repository }}:{{ .Values.image.nginx.tag }}"
+          imagePullPolicy: {{ .Values.image.nginx.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: shared-static
+              mountPath: /usr/share/nginx/html/static
+              readOnly: true
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources.nginx | nindent 12 }}
+
+        - name: app
+          image: "{{ .Values.image.app.repository }}:{{ .Values.image.app.tag }}"
+          imagePullPolicy: {{ .Values.image.app.pullPolicy }}
+          ports:
+            - name: app-http
+              containerPort: 5000
+          env:
+            - name: S3_BUCKET
+              value: {{ .Values.appConfig.s3Bucket | quote }}
+            - name: S3_PREFIX
+              value: {{ .Values.appConfig.s3Prefix | quote }}
+            - name: AWS_REGION
+              value: {{ .Values.appConfig.awsRegion | quote }}
+            - name: MAX_UPLOAD_MB
+              value: {{ .Values.appConfig.maxUploadMb | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.appConfig.logLevel | quote }}
+            - name: UPLOAD_DIR
+              value: "/data/uploads"
+            - name: DB_PATH
+              value: "/data/history.db"
+          volumeMounts:
+            - name: shared-static
+              mountPath: /app/static
+            - name: app-data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources.app | nindent 12 }}
+
+      volumes:
+        - name: shared-static
+          emptyDir: {}
+        - name: app-data
+          emptyDir: {}
+        - name: nginx-conf
+          configMap:
+            name: {{ include "spidersilk-app.fullname" . }}-nginx

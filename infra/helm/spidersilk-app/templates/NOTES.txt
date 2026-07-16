@@ -1,0 +1,30 @@
+SpiderSilk app deployed as release "{{ .Release.Name }}" in namespace "{{ .Release.Namespace }}".
+
+{{- if contains "NodePort" .Values.service.type }}
+
+Get the URL with:
+  minikube service {{ include "spidersilk-app.fullname" . }} --url
+  # or:
+  export NODE_PORT=$(kubectl get svc {{ include "spidersilk-app.fullname" . }} -n {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}")
+  export NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo "http://$NODE_IP:$NODE_PORT"
+
+{{- else if contains "LoadBalancer" .Values.service.type }}
+
+Get the URL with (it may take a few minutes for the LoadBalancer to provision):
+  kubectl get svc {{ include "spidersilk-app.fullname" . }} -n {{ .Release.Namespace }} -w
+
+{{- else }}
+
+Port-forward to reach it locally:
+  kubectl port-forward svc/{{ include "spidersilk-app.fullname" . }} -n {{ .Release.Namespace }} 8080:{{ .Values.service.port }}
+  open http://localhost:8080
+
+{{- end }}
+
+{{- if not .Values.appConfig.s3Bucket }}
+
+NOTE: appConfig.s3Bucket is empty — the app will run, but uploads will show
+S3 status "skipped: S3_BUCKET not configured". Set it via
+infra/ansible (see infra/ansible/README.md) or -f values-<env>.yaml.
+{{- end }}
