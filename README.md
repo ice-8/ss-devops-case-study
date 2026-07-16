@@ -22,12 +22,12 @@ against; other recent versions should work fine.
 | [Docker](https://docs.docker.com/get-docker/) | building/running the app image | 29 |
 | [Docker Hub](https://hub.docker.com/) account | `scripts/build-and-push.sh` | — |
 | [Minikube](https://minikube.sigs.k8s.io/) | running the full stack locally on Kubernetes | 1.33+ |
-| [kubectl](https://kubernetes.io/docs/tasks/tools/) | talking to Minikube / any cluster | 1.29+ |
+| [kubectl](https://kubernetes.io/docs/tasks/tools/) | talking to Minikube / any cluster | 1.35+ |
 | [Helm](https://helm.sh/) 3 | rendering/installing `infra/helm/spidersilk-app` | v4 (Helm 3.x chart syntax) |
 | [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/index.html) (`ansible-core`) | rendering app config, `infra/ansible/` | 2.21 |
 | [Terraform](https://developer.hashicorp.com/terraform/install) 1.5+ | provisioning the S3 bucket, `infra/s3/` | 1.15 |
 | [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) + credentials (`aws configure`) | S3 CLI fallback, kops state store, IAM | 2.x |
-| [kops](https://kops.sigs.k8s.io/getting_started/install/) | actually standing up `infra/kops/` on AWS | 1.29+ |
+| [kops](https://kops.sigs.k8s.io/getting_started/install/) | actually standing up `infra/kops/` on AWS | 1.35+ |
 
 None of `kops`, `terraform apply`, or a live AWS account are required just to
 read/validate the infra code — see the per-directory READMEs

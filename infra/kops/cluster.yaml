@@ -35,6 +35,18 @@ spec:
     masters: public
     nodes: public
 
+  # Hand-authored Cluster YAML (applied via `kops create -f`, not the
+  # `kops create cluster` CLI wizard) does NOT get the wizard's implicit
+  # --ssh-access/--api-loadbalancer defaults — without these two fields kops
+  # provisions the master/node security groups with no ingress rule at all
+  # for port 22 or the API port, which is why SSH and kubectl access were
+  # both unreachable. Open to any source for this demo cluster; for a real
+  # environment scope these down to your office/VPN CIDR instead of 0.0.0.0/0.
+  sshAccess:
+    - 0.0.0.0/0
+  kubernetesApiAccess:
+    - 0.0.0.0/0
+
   api:
     loadBalancer:
       type: Public

@@ -27,6 +27,13 @@ Autoscaler's `--node-group-auto-discovery=asg:tag=...` flag picks up *every*
 worker instance group automatically — new instance groups only need the same
 two tags to be covered, no autoscaler redeploy required.
 
+
+## SSH (22) / API (443) access
+
+For testing purposes access to nodes port 22 and 443 is allowed from `0.0.0.0/0`.
+
+Set it to appropriate value for any production setup or other security requiremtns in `cluster.yaml`.
+
 ## Bring-up walkthrough (not executed here)
 
 ```bash
@@ -49,6 +56,8 @@ kops create secret --name spidersilk.k8s.local sshpublickey admin -i ~/.ssh/id_r
 kops update cluster --name spidersilk.k8s.local
 kops update cluster --name spidersilk.k8s.local --yes
 kops validate cluster --wait 10m
+kops export kubeconfig spidersilk.k8s.local --admin
+kubectl get nodes
 
 # 5. Attach the autoscaler IAM policy to the node instance profile, then:
 kubectl apply -f cluster-autoscaler.yaml
@@ -62,3 +71,21 @@ kops rolling-update cluster --yes
 `cluster.yaml` uses `configBase: s3://spidersilk-app-kops-state-store/...` and the
 IAM policy references the literal cluster name — replace `spidersilk-app-*`
 placeholders before use.
+
+## Pod containers crash-looping with "exec format error"
+
+CPU architecture mismatch, not a kops issue. The worker instance types
+(`t3.medium`, `t3a.medium`, `t3.large`) are all `amd64` — a `spidersilk-app`
+image built with a plain `docker build` on an Apple Silicon (`arm64`)
+machine only targets the host architecture, so it runs fine locally but
+fails on these nodes with `exec /usr/bin/sh: exec format error`.
+
+Build/push a multi-arch image instead — `scripts/build-and-push.sh` already
+does this via `docker buildx`:
+
+```bash
+DOCKERHUB_USER=youruser ./scripts/build-and-push.sh v1
+```
+
+which builds and pushes `linux/amd64,linux/arm64` in one go (override with
+`PLATFORMS=...` if you only need one).

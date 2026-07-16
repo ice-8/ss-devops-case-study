@@ -11,7 +11,7 @@ replicaCount: 2
 image:
   app:
     repository: icenin9/spidersilk-app
-    tag: v1
+    tag: v2
     pullPolicy: IfNotPresent
   nginx:
     repository: nginx
