@@ -58,14 +58,13 @@ flowchart TB
 
 ## Layers
 
-1. **kops cluster** (`infra/kops/`) — a `.k8s.local` gossip cluster with
-   three instance groups: one on-demand control-plane, one on-demand worker
-   pool, one spot worker pool. Both worker pools use kops'
+1. **kops cluster** (`infra/kops/`) — a `.k8s.local` cluster with
+   three instance groups: on-demand control-plane, on-demand worker
+   pool, spot worker pool. Both worker pools use kops'
    `mixedInstancesPolicy` across several instance types for capacity
    flexibility, and both carry the same `k8s.io/cluster-autoscaler/*`
    `cloudLabels` so a single Cluster Autoscaler deployment auto-discovers
-   and scales every instance group — no per-ASG wiring needed when a new
-   instance group is added.
+   and scales every instance group.
 
 2. **Application pod** (`infra/helm/spidersilk-app/templates/deployment.yaml`) —
    one Deployment, one Pod, two long-running containers (`nginx`, `app`) plus
@@ -86,8 +85,7 @@ flowchart TB
    application configuration (S3 bucket name, region, replica bounds, log
    level). The `app_config` role renders that into a Helm values fragment,
    which is layered on top of the chart's own `values.yaml` with
-   `helm upgrade -f values.yaml -f generated/<env>-app-config.yaml`. One
-   chart is reused for every environment; only the values differ.
+   `helm upgrade -f values.yaml -f generated/<env>-app-config.yaml`.
 
 5. **Web application** (`app/`) — Flask app: `/` to upload a CSV,
    `/upload` parses it (unheadered `sku,description,price` rows) and renders
