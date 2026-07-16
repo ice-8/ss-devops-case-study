@@ -17,7 +17,7 @@ kind: Cluster
 metadata:
   name: spidersilk.k8s.local
 spec:
-  kubernetesVersion: "1.29.6"
+  kubernetesVersion: "1.35.6"
   cloudProvider: aws
 
   channel: stable
