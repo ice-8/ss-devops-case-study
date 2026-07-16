@@ -9,6 +9,31 @@ config, and an S3 bucket with a Glacier lifecycle rule.
 See [`docs/architecture.md`](docs/architecture.md) for the full write-up and
 architecture diagram.
 
+## Requirements
+
+Nothing here needs everything installed at once — pick the row(s) that match
+what you're trying to run. Versions are what this repo was built/tested
+against; other recent versions should work fine.
+
+| Tool | Needed for | Tested with |
+|---|---|---|
+| [git](https://git-scm.com/) | cloning/working with the repo | 2.50 |
+| [Python 3.12+](https://www.python.org/) | running the app locally, unit tests | 3.12 |
+| [Docker](https://docs.docker.com/get-docker/) | building/running the app image | 29 |
+| [Docker Hub](https://hub.docker.com/) account | `scripts/build-and-push.sh` | — |
+| [Minikube](https://minikube.sigs.k8s.io/) | running the full stack locally on Kubernetes | 1.33+ |
+| [kubectl](https://kubernetes.io/docs/tasks/tools/) | talking to Minikube / any cluster | 1.29+ |
+| [Helm](https://helm.sh/) 3 | rendering/installing `infra/helm/spidersilk-app` | v4 (Helm 3.x chart syntax) |
+| [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/index.html) (`ansible-core`) | rendering app config, `infra/ansible/` | 2.21 |
+| [Terraform](https://developer.hashicorp.com/terraform/install) 1.5+ | provisioning the S3 bucket, `infra/s3/` | 1.15 |
+| [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) + credentials (`aws configure`) | S3 CLI fallback, kops state store, IAM | 2.x |
+| [kops](https://kops.sigs.k8s.io/getting_started/install/) | actually standing up `infra/kops/` on AWS | 1.29+ |
+
+None of `kops`, `terraform apply`, or a live AWS account are required just to
+read/validate the infra code — see the per-directory READMEs
+(`infra/kops/README.md`, `infra/s3/README.md`) for what was hand-verified
+without them.
+
 ## Repo map
 
 ```
