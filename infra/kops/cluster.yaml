@@ -41,6 +41,26 @@ spec:
     allowContainerRegistry: true
     legacy: false
 
+  # Grants the app's S3 access (infra/s3/iam-app-policy.json) to the shared
+  # node IAM role — both worker IGs use role: Node with no per-IG iam.profile,
+  # so this covers the app pod regardless of which one it schedules onto.
+  # Keep in sync with infra/s3/iam-app-policy.json's Statement array.
+  additionalPolicies:
+    node: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": ["s3:PutObject", "s3:GetObject"],
+          "Resource": "arn:aws:s3:::spidersilk-app-spidersilk-processed-files/processed/*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": "s3:ListBucket",
+          "Resource": "arn:aws:s3:::spidersilk-app-spidersilk-processed-files",
+          "Condition": { "StringLike": { "s3:prefix": "processed/*" } }
+        }
+      ]
+
   subnets:
     - name: eu-west-1a
       type: Public
