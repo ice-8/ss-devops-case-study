@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ record.filename }} — processed{% endblock %}
+{% block content %}
+  <h1>Processed: {{ record.filename }}</h1>
+
+  <dl class="summary">
+    <dt>Uploaded at</dt><dd>{{ record.uploaded_at }}</dd>
+    <dt>Row count</dt><dd>{{ record.row_count }}</dd>
+    <dt>Total value</dt><dd>{{ "%.2f"|format(record.total_value) }}</dd>
+    <dt>S3 status</dt><dd class="status status-{{ 'ok' if record.s3_status == 'uploaded' else 'warn' }}">{{ record.s3_status }}</dd>
+    {% if record.s3_key %}<dt>S3 key</dt><dd><code>{{ record.s3_key }}</code></dd>{% endif %}
+  </dl>
+
+  <table class="rows-table">
+    <thead>
+      <tr><th>#</th><th>SKU</th><th>Description</th><th>Price</th></tr>
+    </thead>
+    <tbody>
+      {% for row in record.rows %}
+      <tr>
+        <td>{{ row.line }}</td>
+        <td>{{ row.sku }}</td>
+        <td>{{ row.description }}</td>
+        <td>{{ "%.2f"|format(row.price) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p><a href="{{ url_for('history') }}">&larr; Back to history</a></p>
+{% endblock %}

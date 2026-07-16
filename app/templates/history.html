@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}History — SpiderSilk{% endblock %}
+{% block content %}
+  <h1>Previously processed files</h1>
+
+  {% if not files %}
+    <p>No files processed yet. <a href="{{ url_for('index') }}">Upload one</a>.</p>
+  {% else %}
+    <table class="rows-table">
+      <thead>
+        <tr><th>Filename</th><th>Uploaded at</th><th>Rows</th><th>Total value</th><th>S3 status</th></tr>
+      </thead>
+      <tbody>
+        {% for f in files %}
+        <tr>
+          <td><a href="{{ url_for('history_detail', file_id=f.id) }}">{{ f.filename }}</a></td>
+          <td>{{ f.uploaded_at }}</td>
+          <td>{{ f.row_count }}</td>
+          <td>{{ "%.2f"|format(f.total_value) }}</td>
+          <td class="status status-{{ 'ok' if f.s3_status == 'uploaded' else 'warn' }}">{{ f.s3_status }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}

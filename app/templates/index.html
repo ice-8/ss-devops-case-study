@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Upload CSV — SpiderSilk{% endblock %}
+{% block content %}
+  <h1>Upload a stock-on-hand CSV</h1>
+  <p class="hint">
+    Expects unheadered rows of <code>"sku","description","price"</code>, e.g. the
+    attached <code>soh.csv</code> sample. Rows are parsed, shown below, and pushed to S3.
+  </p>
+
+  <form class="upload-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+    <input id="csv_file" type="file" name="csv_file" accept=".csv" required>
+    <button type="submit">Process file</button>
+  </form>
+
+  <p><a href="{{ url_for('history') }}">View previously processed files &rarr;</a></p>
+{% endblock %}
