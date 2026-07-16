@@ -8,13 +8,13 @@
         "s3:PutObject",
         "s3:GetObject"
       ],
-      "Resource": "arn:aws:s3:::CHANGEME-spidersilk-processed-files/processed/*"
+      "Resource": "arn:aws:s3:::spidersilk-app-spidersilk-processed-files/processed/*"
     },
     {
       "Sid": "SpiderSilkAppListBucket",
       "Effect": "Allow",
       "Action": "s3:ListBucket",
-      "Resource": "arn:aws:s3:::CHANGEME-spidersilk-processed-files",
+      "Resource": "arn:aws:s3:::spidersilk-app-spidersilk-processed-files",
       "Condition": {
         "StringLike": { "s3:prefix": "processed/*" }
       }

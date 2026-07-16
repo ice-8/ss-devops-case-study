@@ -31,8 +31,10 @@ two tags to be covered, no autoscaler redeploy required.
 
 ```bash
 # 1. One-time: an S3 bucket to hold kops cluster state
-aws s3api create-bucket --bucket CHANGEME-kops-state-store --region eu-west-1
-export KOPS_STATE_STORE=s3://CHANGEME-kops-state-store
+aws s3api create-bucket --bucket spidersilk-app-kops-state-store \
+--region eu-west-1 \
+--create-bucket-configuration LocationConstraint=eu-west-1
+export KOPS_STATE_STORE=s3://spidersilk-app-kops-state-store
 
 # 2. Register the cluster + instance groups
 kops create -f cluster.yaml
@@ -57,6 +59,6 @@ kops update cluster --yes
 kops rolling-update cluster --yes
 ```
 
-`cluster.yaml` uses `configBase: s3://CHANGEME-kops-state-store/...` and the
-IAM policy references the literal cluster name — replace `CHANGEME-*`
+`cluster.yaml` uses `configBase: s3://spidersilk-app-kops-state-store/...` and the
+IAM policy references the literal cluster name — replace `spidersilk-app-*`
 placeholders before use.

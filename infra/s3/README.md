@@ -32,7 +32,7 @@ aws s3api put-public-access-block \
 
 ## Wiring it to the app
 
-1. Replace `CHANGEME-*` placeholders in `iam-app-policy.json` with your real
+1. Replace `spidersilk-app-*` placeholders in `iam-app-policy.json` with your real
    bucket name, and attach that policy to whatever the app runs as (node
    instance profile, or an IRSA role referenced in
    `infra/helm/spidersilk-app/values.yaml` under `serviceAccount.annotations`).

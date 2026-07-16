@@ -1,7 +1,7 @@
 variable "bucket_name" {
   description = "Globally-unique S3 bucket name for processed CSV files."
   type        = string
-  default     = "CHANGEME-spidersilk-processed-files"
+  default     = "spidersilk-app-spidersilk-processed-files"
 }
 
 variable "aws_region" {

@@ -9,7 +9,7 @@ terraform {
 
   # Uncomment and point at your own state backend before applying for real.
   # backend "s3" {
-  #   bucket = "CHANGEME-terraform-state-store"
+  #   bucket = "spidersilk-app-terraform-state-store"
   #   key    = "spidersilk/s3.tfstate"
   #   region = "eu-west-1"
   # }

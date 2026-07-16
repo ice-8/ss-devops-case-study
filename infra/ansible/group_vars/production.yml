@@ -1,5 +1,5 @@
 ---
-app_s3_bucket: "CHANGEME-spidersilk-processed-files"
+app_s3_bucket: "spidersilk-app-spidersilk-processed-files"
 app_aws_region: "eu-west-1"
 app_min_replicas: 2
 app_max_replicas: 8
