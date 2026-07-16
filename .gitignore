@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Claude Code local settings (machine-specific, not project config)
+.claude/settings.local.json
+
+# App runtime data (uploads, sqlite db) — never commit local test data
+app/data/
+*.db
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Ansible generated output (rendered per-environment, not source)
+infra/helm/spidersilk-app/generated/
+
+# Helm
+*.tgz
+
+# OS/editor cruft
+.DS_Store
+*.swp
