@@ -57,7 +57,7 @@ resources:
 appConfig:
   s3Bucket: ""
   s3Prefix: "processed/"
-  awsRegion: "us-east-1"
+  awsRegion: "eu-west-1"
   maxUploadMb: "10"
   logLevel: "INFO"
 

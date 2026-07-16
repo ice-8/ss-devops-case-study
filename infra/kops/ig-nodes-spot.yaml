@@ -16,9 +16,9 @@ spec:
   minSize: 0
   maxSize: 10
   subnets:
-    - us-east-1a
-    - us-east-1b
-    - us-east-1c
+    - eu-west-1a
+    - eu-west-1b
+    - eu-west-1c
   mixedInstancesPolicy:
     instances:
       - t3.medium

@@ -8,7 +8,7 @@ applied.
 
 | File | Purpose |
 |---|---|
-| `cluster.yaml` | Cluster resource — AWS, 3 AZs (`us-east-1a/b/c`), Calico networking, gossip DNS (`.k8s.local`, no real domain needed) |
+| `cluster.yaml` | Cluster resource — AWS, 3 AZs (`eu-west-1a/b/c`), Calico networking, gossip DNS (`.k8s.local`, no real domain needed) |
 | `ig-master.yaml` | Control-plane instance group — single on-demand `t3.medium` |
 | `ig-nodes-ondemand.yaml` | Worker instance group — `mixedInstancesPolicy` across `t3.medium`/`t3a.medium`/`t3.large`, 100% on-demand, min 2 / max 6 |
 | `ig-nodes-spot.yaml` | Worker instance group — same instance-type mix, 100% spot (`onDemandBase: 0`), `capacity-optimized` allocation, min 0 / max 10, tainted `node-lifecycle=spot:PreferNoSchedule` so workloads must opt in |
@@ -31,7 +31,7 @@ two tags to be covered, no autoscaler redeploy required.
 
 ```bash
 # 1. One-time: an S3 bucket to hold kops cluster state
-aws s3api create-bucket --bucket CHANGEME-kops-state-store --region us-east-1
+aws s3api create-bucket --bucket CHANGEME-kops-state-store --region eu-west-1
 export KOPS_STATE_STORE=s3://CHANGEME-kops-state-store
 
 # 2. Register the cluster + instance groups

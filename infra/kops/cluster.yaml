@@ -48,29 +48,29 @@ spec:
     legacy: false
 
   subnets:
-    - name: us-east-1a
+    - name: eu-west-1a
       type: Public
-      zone: us-east-1a
+      zone: eu-west-1a
       cidr: 10.20.32.0/19
-    - name: us-east-1b
+    - name: eu-west-1b
       type: Public
-      zone: us-east-1b
+      zone: eu-west-1b
       cidr: 10.20.64.0/19
-    - name: us-east-1c
+    - name: eu-west-1c
       type: Public
-      zone: us-east-1c
+      zone: eu-west-1c
       cidr: 10.20.96.0/19
 
   etcdClusters:
     - name: main
       etcdMembers:
         - name: a
-          instanceGroup: master-us-east-1a
+          instanceGroup: master-eu-west-1a
       version: "3.5.13"
     - name: events
       etcdMembers:
         - name: a
-          instanceGroup: master-us-east-1a
+          instanceGroup: master-eu-west-1a
       version: "3.5.13"
 
   # kubelet/cluster-autoscaler-friendly defaults

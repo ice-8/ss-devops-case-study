@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 S3_BUCKET = os.environ.get("S3_BUCKET", "")
 S3_PREFIX = os.environ.get("S3_PREFIX", "processed/")
-AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
+AWS_REGION = os.environ.get("AWS_REGION", "eu-west-1")
 
 
 def upload_processed_file(local_path: str, filename: str) -> tuple[str | None, str]:

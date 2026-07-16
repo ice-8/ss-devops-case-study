@@ -160,7 +160,7 @@ spec:
             - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/spidersilk.k8s.local
           env:
             - name: AWS_REGION
-              value: us-east-1
+              value: eu-west-1
           volumeMounts:
             - name: ssl-certs
               mountPath: /etc/ssl/certs/ca-certificates.crt

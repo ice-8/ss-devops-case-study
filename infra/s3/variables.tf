@@ -7,7 +7,7 @@ variable "bucket_name" {
 variable "aws_region" {
   description = "AWS region to create the bucket in."
   type        = string
-  default     = "us-east-1"
+  default     = "eu-west-1"
 }
 
 variable "glacier_transition_days" {

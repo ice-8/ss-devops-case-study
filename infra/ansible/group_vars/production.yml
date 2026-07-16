@@ -1,6 +1,6 @@
 ---
 app_s3_bucket: "CHANGEME-spidersilk-processed-files"
-app_aws_region: "us-east-1"
+app_aws_region: "eu-west-1"
 app_min_replicas: 2
 app_max_replicas: 8
 helm_values_file: "values.yaml"

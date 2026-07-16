@@ -39,7 +39,7 @@ resources:
 
 appConfig:
   s3Bucket: ""   # left empty on purpose: app degrades to "S3 upload skipped" without creds
-  awsRegion: "us-east-1"
+  awsRegion: "eu-west-1"
   logLevel: "DEBUG"
 
 # Minikube's single node isn't tainted, so the spot toleration is harmless

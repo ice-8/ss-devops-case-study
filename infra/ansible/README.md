@@ -37,7 +37,7 @@ The generated file is a small Helm values fragment:
 appConfig:
   s3Bucket: "CHANGEME-spidersilk-processed-files"
   s3Prefix: "processed/"
-  awsRegion: "us-east-1"
+  awsRegion: "eu-west-1"
   maxUploadMb: "10"
   logLevel: "INFO"
 autoscaling:

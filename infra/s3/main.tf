@@ -11,7 +11,7 @@ terraform {
   # backend "s3" {
   #   bucket = "CHANGEME-terraform-state-store"
   #   key    = "spidersilk/s3.tfstate"
-  #   region = "us-east-1"
+  #   region = "eu-west-1"
   # }
 }
 

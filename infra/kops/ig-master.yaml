@@ -3,7 +3,7 @@
 apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:
-  name: master-us-east-1a
+  name: master-eu-west-1a
   labels:
     kops.k8s.io/cluster: spidersilk.k8s.local
 spec:
@@ -13,6 +13,6 @@ spec:
   minSize: 1
   maxSize: 1
   subnets:
-    - us-east-1a
+    - eu-west-1a
   cloudLabels:
     Project: spidersilk

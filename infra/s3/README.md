@@ -20,7 +20,7 @@ that transitions everything under `processed/` to **S3 Glacier** after
 ## Option B — AWS CLI fallback (no Terraform)
 
 ```bash
-aws s3api create-bucket --bucket your-unique-bucket-name --region us-east-1
+aws s3api create-bucket --bucket your-unique-bucket-name --region eu-west-1
 aws s3api put-bucket-lifecycle-configuration \
   --bucket your-unique-bucket-name \
   --lifecycle-configuration file://lifecycle.json

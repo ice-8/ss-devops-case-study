@@ -3,7 +3,7 @@
 # (minikube.yml, production.yml) override individual keys.
 app_name: spidersilk-app
 app_s3_prefix: "processed/"
-app_aws_region: "us-east-1"
+app_aws_region: "eu-west-1"
 app_max_upload_mb: "10"
 app_log_level: "INFO"
 
