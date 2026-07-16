@@ -1,0 +1,14 @@
+---
+# Renders application config (source of truth: group_vars/<env>.yml) into a
+# Helm values fragment, and optionally deploys it.
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.ini playbook.yml -l minikube
+#   ansible-playbook -i inventory/hosts.ini playbook.yml -l production -e deploy_with_helm=true
+- name: Render and (optionally) apply SpiderSilk app configuration
+  hosts: all
+  gather_facts: false
+  vars:
+    env_name: "{{ group_names[0] }}"
+  roles:
+    - app_config

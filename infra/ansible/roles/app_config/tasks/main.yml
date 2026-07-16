@@ -1,0 +1,21 @@
+---
+- name: Ensure generated values directory exists
+  file:
+    path: "{{ generated_values_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Render app config as a Helm values fragment
+  template:
+    src: app-config-values.yaml.j2
+    dest: "{{ generated_values_dir }}/{{ env_name }}-app-config.yaml"
+    mode: "0644"
+
+- name: Deploy via Helm (only if deploy_with_helm is true)
+  command: >
+    helm upgrade --install {{ helm_release_name }}
+    {{ playbook_dir }}/../helm/spidersilk-app
+    -f {{ playbook_dir }}/../helm/spidersilk-app/{{ helm_values_file }}
+    -f {{ generated_values_dir }}/{{ env_name }}-app-config.yaml
+  when: deploy_with_helm | bool
+  changed_when: true

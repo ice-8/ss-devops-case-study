@@ -1,0 +1,17 @@
+{#
+  Rendered by the app_config role. This is the Helm values *fragment* that
+  carries application configuration for the "{{ env_name }}" environment —
+  Ansible is the source of truth for these values (per the case study's
+  "application configs in Ansible" requirement); Helm just consumes them.
+  Generated file — edit group_vars/{{ env_name }}.yml instead.
+#}
+appConfig:
+  s3Bucket: {{ app_s3_bucket | to_json }}
+  s3Prefix: {{ app_s3_prefix | to_json }}
+  awsRegion: {{ app_aws_region | to_json }}
+  maxUploadMb: {{ app_max_upload_mb | to_json }}
+  logLevel: {{ app_log_level | to_json }}
+
+autoscaling:
+  minReplicas: {{ app_min_replicas }}
+  maxReplicas: {{ app_max_replicas }}

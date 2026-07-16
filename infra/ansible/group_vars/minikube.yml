@@ -1,0 +1,7 @@
+---
+app_s3_bucket: ""   # no AWS creds locally -> app degrades to "S3 upload skipped"
+app_log_level: "DEBUG"
+app_min_replicas: 1
+app_max_replicas: 3
+helm_values_file: "values-minikube.yaml"
+helm_release_name: "spidersilk"
