@@ -1,0 +1,16 @@
+{
+  "Rules": [
+    {
+      "ID": "glacier-transition",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "processed/" },
+      "Transitions": [
+        { "Days": 30, "StorageClass": "GLACIER" }
+      ],
+      "NoncurrentVersionTransitions": [
+        { "NoncurrentDays": 30, "StorageClass": "GLACIER" }
+      ],
+      "NoncurrentVersionExpiration": { "NoncurrentDays": 90 }
+    }
+  ]
+}
