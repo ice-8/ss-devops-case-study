@@ -7,13 +7,8 @@ app_aws_region: "eu-west-1"
 app_max_upload_mb: "10"
 app_log_level: "INFO"
 
-# Where the rendered Helm values fragment is written; consumed by:
-#   helm upgrade --install spidersilk infra/helm/spidersilk-app \
-#     -f infra/helm/spidersilk-app/values.yaml \
-#     -f infra/helm/spidersilk-app/generated/<env>-app-config.yaml
+# See infra/ansible/README.md for the full render/deploy flow.
 generated_values_dir: "{{ playbook_dir }}/../helm/spidersilk-app/generated"
 
-# Set to true to have the playbook also run `helm upgrade --install` after
-# rendering config. Left false by default so running the playbook is always
-# safe (render-only) unless explicitly opted in.
+# false = render-only (safe default); pass -e deploy_with_helm=true to also apply.
 deploy_with_helm: false

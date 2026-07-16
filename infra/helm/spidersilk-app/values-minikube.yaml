@@ -1,8 +1,4 @@
-# Local Minikube overrides. Usage:
-#   eval $(minikube docker-env)
-#   docker build -t spidersilk-app:local ../../../app
-#   helm install spidersilk . -f values.yaml -f values-minikube.yaml
-#   minikube service spidersilk-app --url
+# Local Minikube overrides — see main README "Deploy to Minikube".
 
 replicaCount: 1
 

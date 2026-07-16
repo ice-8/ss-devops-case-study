@@ -1,8 +1,3 @@
-# Spot worker instance group. mixedInstancesPolicy diversified across several
-# instance types/families (better spot availability + interruption spread),
-# 100% spot capacity (onDemandBase: 0, onDemandAboveBase: 0), allocated with
-# capacity-optimized to minimize interruption frequency. Taken together with
-# ig-nodes-ondemand.yaml, this gives the cluster both lifecycles side by side.
 apiVersion: kops.k8s.io/v1alpha2
 kind: InstanceGroup
 metadata:

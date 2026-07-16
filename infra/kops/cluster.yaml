@@ -1,17 +1,5 @@
-# kops Cluster resource for the SpiderSilk case study.
-#
-# Uses a `.k8s.local` gossip cluster name so it's a valid, self-contained
-# config that doesn't depend on owning a real Route53 domain — matches the
-# brief's "not expecting to have running cluster."
-#
-# Apply with:
-#   export KOPS_STATE_STORE=s3://spidersilk-app-kops-state-store
-#   kops create -f infra/kops/cluster.yaml
-#   kops create -f infra/kops/ig-master.yaml
-#   kops create -f infra/kops/ig-nodes-ondemand.yaml
-#   kops create -f infra/kops/ig-nodes-spot.yaml
-#   kops create secret --name spidersilk.k8s.local sshpublickey admin -i ~/.ssh/id_rsa.pub
-#   kops update cluster --name spidersilk.k8s.local --yes
+# `.k8s.local` gossip name — no real Route53 domain required. See
+# infra/kops/README.md for bring-up/teardown commands.
 apiVersion: kops.k8s.io/v1alpha2
 kind: Cluster
 metadata:
@@ -35,13 +23,7 @@ spec:
     masters: public
     nodes: public
 
-  # Hand-authored Cluster YAML (applied via `kops create -f`, not the
-  # `kops create cluster` CLI wizard) does NOT get the wizard's implicit
-  # --ssh-access/--api-loadbalancer defaults — without these two fields kops
-  # provisions the master/node security groups with no ingress rule at all
-  # for port 22 or the API port, which is why SSH and kubectl access were
-  # both unreachable. Open to any source for this demo cluster; for a real
-  # environment scope these down to your office/VPN CIDR instead of 0.0.0.0/0.
+  # See infra/kops/README.md "SSH (22) / API (443) access"
   sshAccess:
     - 0.0.0.0/0
   kubernetesApiAccess:

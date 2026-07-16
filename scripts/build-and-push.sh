@@ -1,18 +1,8 @@
 #!/usr/bin/env bash
-# Builds the SpiderSilk app image and pushes it to Docker Hub.
-#
-# Usage:
-#   DOCKERHUB_USER=myuser ./scripts/build-and-push.sh [tag]
-#
-# Requires: docker login (run once beforehand).
-#
-# Builds a multi-arch (amd64 + arm64) image via buildx rather than a plain
-# `docker build`, which only targets your host's architecture. That matters
-# here specifically: the kops worker instance types (t3.medium, t3a.medium,
-# t3.large — see infra/kops/ig-nodes-*.yaml) are all amd64, so a single-arch
-# image built on an Apple Silicon (arm64) machine would push fine but fail
-# on the cluster with "exec format error". Multi-arch covers both that and
-# an Apple Silicon Minikube locally, from the same tag.
+# Builds (multi-arch, via buildx) and pushes the app image to Docker Hub.
+# Usage: DOCKERHUB_USER=myuser ./scripts/build-and-push.sh [tag]
+# Requires: docker login. See infra/kops/README.md Troubleshooting for why
+# multi-arch matters here.
 set -euo pipefail
 
 TAG="${1:-latest}"
