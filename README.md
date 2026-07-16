@@ -30,6 +30,8 @@ cd app
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 pytest -q                     # unit tests for the CSV parser
+export DB_PATH="./data/history.db"
+export UPLOAD_DIR="./data/uploads"
 python app.py                 # http://127.0.0.1:5000
 ```
 
