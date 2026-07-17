@@ -16,7 +16,7 @@ RUN useradd --create-home appuser \
 USER appuser
 
 ENV UPLOAD_DIR=/data/uploads \
-    DB_PATH=/data/history.db \
+    RECORDS_DIR=/data/records \
     PORT=5000
 
 EXPOSE 5000

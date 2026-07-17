@@ -41,7 +41,7 @@ cd app
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 pytest -q
-export DB_PATH="./data/history.db" UPLOAD_DIR="./data/uploads"
+export RECORDS_DIR="./data/records" UPLOAD_DIR="./data/uploads"
 python app.py                 # http://127.0.0.1:5000
 ```
 

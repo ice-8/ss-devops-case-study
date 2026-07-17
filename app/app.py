@@ -5,7 +5,7 @@ import uuid
 from flask import Flask, abort, flash, redirect, render_template, request, url_for
 
 from csv_parser import CsvParseError, parse_soh_csv, summarize
-import db
+import records
 from s3_utils import upload_processed_file
 
 UPLOAD_DIR = os.environ.get("UPLOAD_DIR", "/data/uploads")
@@ -18,7 +18,6 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me")
 app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH_MB * 1024 * 1024
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-db.init_db()
 
 
 @app.get("/")
@@ -58,7 +57,7 @@ def upload():
 
     s3_key, s3_status = upload_processed_file(local_path, safe_name)
 
-    record_id = db.save_processed_file(
+    record_id = records.save_processed_file(
         filename=file.filename,
         rows=rows,
         summary=summary,
@@ -71,13 +70,13 @@ def upload():
 
 @app.get("/history")
 def history():
-    files = db.list_processed_files()
+    files = records.list_processed_files()
     return render_template("history.html", files=files)
 
 
-@app.get("/history/<int:file_id>")
+@app.get("/history/<file_id>")
 def history_detail(file_id):
-    record = db.get_processed_file(file_id)
+    record = records.get_processed_file(file_id)
     if record is None:
         abort(404)
     return render_template("result.html", record=record)

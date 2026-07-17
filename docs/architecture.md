@@ -90,9 +90,13 @@ flowchart TB
 5. **Web application** (`app/`) — Flask app: `/` to upload a CSV,
    `/upload` parses it (unheadered `sku,description,price` rows) and renders
    the parsed lines, `/history` lists previously processed files, and
-   `/history/<id>` re-displays a past file's rows from local SQLite (so
-   history is available instantly even after the source object has
-   transitioned to Glacier). Every processed file is also pushed to S3 under
+   `/history/<id>` re-displays a past file's rows. Each processed file's
+   metadata + rows are written as one small JSON record (`app/records.py`) —
+   to S3 under `records/` when `S3_BUCKET` is set, to a local directory
+   otherwise, so the same code path works with or without AWS. `records/` is
+   a separate prefix from `processed/` (the raw CSVs) and excluded from the
+   Glacier lifecycle rule, so history stays instantly readable no matter how
+   old the source file is. Every processed file is also pushed to S3 under
    `processed/<name>`; if no AWS credentials/bucket are configured the
    upload step degrades to a visible "skipped" status rather than failing
    the request.
@@ -109,8 +113,8 @@ flowchart TB
 
 ## Known trade-offs (explicitly out of scope for this case study)
 
-- **History persistence**: `history.db` and `uploads/` live on the pod's
-  `emptyDir`, so they don't survive a pod restart and aren't shared across
-  HPA-scaled replicas. A production version would move this to RDS/DynamoDB
-  or a ReadWriteMany volume; kept simple here since the brief only asks the
-  app to "show previously processed files," not guarantee durability.
+- **History persistence without a bucket**: when `S3_BUCKET` is unset
+  (local/Minikube by default), records fall back to the pod's `emptyDir`,
+  so they don't survive a pod restart and aren't shared across HPA-scaled
+  replicas. This only affects that local-only fallback — once a real bucket
+  is configured, history is S3-backed, durable, and shared across replicas.

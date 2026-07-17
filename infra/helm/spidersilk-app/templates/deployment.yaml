@@ -95,8 +95,8 @@ spec:
               value: {{ .Values.appConfig.logLevel | quote }}
             - name: UPLOAD_DIR
               value: "/data/uploads"
-            - name: DB_PATH
-              value: "/data/history.db"
+            - name: RECORDS_DIR
+              value: "/data/records"
           volumeMounts:
             - name: shared-static
               mountPath: /app/static
