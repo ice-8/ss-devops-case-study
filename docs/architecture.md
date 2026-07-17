@@ -109,11 +109,3 @@ flowchart TB
 7. **Images** — the app is built from `app/Dockerfile` and pushed to Docker
    Hub with `scripts/build-and-push.sh`; nginx uses the stock
    `nginx:1.27-alpine` image, configured entirely via a mounted ConfigMap.
-
-## Known trade-offs (explicitly out of scope for this case study)
-
-- **History persistence without a bucket**: when `S3_BUCKET` is unset
-  (local/Minikube by default), records fall back to the pod's `emptyDir`,
-  so they don't survive a pod restart and aren't shared across HPA-scaled
-  replicas. This only affects that local-only fallback — once a real bucket
-  is configured, history is S3-backed, durable, and shared across replicas.
