@@ -69,25 +69,29 @@ helm install spidersilk infra/helm/spidersilk-app \
 minikube service spidersilk --url
 ```
 
-App config (S3 bucket, replicas, log level) is managed via Ansible — see
-[`infra/ansible/README.md`](infra/ansible/README.md).
+## Deploy to production (kops)
 
-## Publish image to Docker Hub
+Five steps, each detailed in its own README:
 
-```bash
-docker login
-DOCKERHUB_USER=youruser ./scripts/build-and-push.sh v1
-```
-
-Builds multi-arch (amd64+arm64) via buildx. Set
-`image.app.repository`/`image.app.tag` in `values.yaml` to match.
-
-## kops cluster
-
-Provision cluster [`infra/kops/README.md`](infra/kops/README.md).
-Deploy App [`infra/ansible/README.md`](infra/ansible/README.md)
-
-## S3 + Glacier
-
-Not applied in this repo — see [`infra/s3/README.md`](infra/s3/README.md)
-for `terraform apply` / `aws-cli` instructions and the app's IAM policy.
+1. **Provision the cluster** — [`infra/kops/README.md`](infra/kops/README.md)
+   (bring-up, teardown, troubleshooting).
+2. **Create the S3 bucket + Glacier lifecycle** — [`infra/s3/README.md`](infra/s3/README.md)
+   (`terraform apply` or the `aws-cli` fallback), then attach its IAM policy
+   to the cluster per that README (kops node role via `additionalPolicies`).
+3. **Build and push the app image**:
+   ```bash
+   docker login
+   DOCKERHUB_USER=youruser ./scripts/build-and-push.sh v1
+   ```
+   Multi-arch (amd64+arm64) via buildx. Set `image.app.repository`/`image.app.tag`
+   in `infra/helm/spidersilk-app/values.yaml` to match.
+4. **Set the environment's app config** — bucket name, region, replica
+   bounds — in `infra/ansible/group_vars/production.yml`.
+5. **Render config and deploy** — [`infra/ansible/README.md`](infra/ansible/README.md):
+   ```bash
+   cd infra/ansible
+   ansible-playbook -i inventory/hosts.ini playbook.yml -l production -e deploy_with_helm=true
+   ```
+   Renders `group_vars/production.yml` into a Helm values fragment and runs
+   `helm upgrade --install` in one step — this is what actually deploys the
+   Helm chart from step 3/4 onto the cluster from step 1.

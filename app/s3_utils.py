@@ -22,6 +22,7 @@ def upload_processed_file(local_path: str, filename: str) -> tuple[str | None, s
 
     try:
         import boto3
+        from boto3.exceptions import S3UploadFailedError
         from botocore.exceptions import BotoCoreError, ClientError, NoCredentialsError
     except ImportError:
         return None, "skipped: boto3 not installed"
@@ -34,6 +35,10 @@ def upload_processed_file(local_path: str, filename: str) -> tuple[str | None, s
     except NoCredentialsError:
         logger.warning("S3 upload skipped: no AWS credentials available")
         return None, "skipped: no AWS credentials"
-    except (BotoCoreError, ClientError) as exc:
+    # client.upload_file() is boto3's managed-transfer method — it wraps the
+    # underlying ClientError in its own S3UploadFailedError, which is NOT a
+    # BotoCoreError/ClientError subclass, so it needs its own except clause
+    # or it propagates straight through as an unhandled 500.
+    except (BotoCoreError, ClientError, S3UploadFailedError) as exc:
         logger.warning("S3 upload failed: %s", exc)
         return None, f"failed: {exc}"

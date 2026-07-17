@@ -1,8 +1,5 @@
 # S3 storage + Glacier transition
 
-Not applied — no AWS credentials at build time. Ready to run once you have
-an account.
-
 ## Option A — Terraform
 
 ```bash

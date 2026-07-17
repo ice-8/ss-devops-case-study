@@ -104,8 +104,7 @@ flowchart TB
 6. **S3 + Glacier** (`infra/s3/`) — Terraform (with an `aws-cli` fallback)
    provisions a private, versioned, encrypted bucket with a lifecycle rule
    transitioning everything under `processed/` to Glacier after 30 days
-   (configurable). Not applied in this repo's build — see
-   `infra/s3/README.md`.
+   (configurable) — see `infra/s3/README.md`.
 
 7. **Images** — the app is built from `app/Dockerfile` and pushed to Docker
    Hub with `scripts/build-and-push.sh`; nginx uses the stock

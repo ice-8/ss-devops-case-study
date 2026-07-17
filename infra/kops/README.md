@@ -1,8 +1,5 @@
 # kops cluster — spidersilk.k8s.local
 
-Config-only, per the case study brief. Valid `kops` input set; nothing here
-has been applied.
-
 ## Layout
 
 | File | Purpose |
