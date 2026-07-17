@@ -66,7 +66,7 @@ helm install spidersilk infra/helm/spidersilk-app \
   -f infra/helm/spidersilk-app/values.yaml \
   -f infra/helm/spidersilk-app/values-minikube.yaml
 
-minikube service spidersilk --url
+minikube service spidersilk-app --url
 ```
 
 ## Deploy to production (kops)
