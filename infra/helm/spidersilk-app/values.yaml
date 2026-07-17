@@ -9,7 +9,7 @@ replicaCount: 2
 image:
   app:
     repository: icenin9/spidersilk-app
-    tag: v2
+    tag: v4
     pullPolicy: IfNotPresent
   nginx:
     repository: nginx
@@ -55,6 +55,15 @@ appConfig:
   awsRegion: "eu-west-1"
   maxUploadMb: "10"
   logLevel: "INFO"
+
+# emptyDir volumes (app-data, shared-static) are created root-owned at pod
+# start, shadowing whatever ownership the image baked in at build time. The
+# app/static-sync containers run as a non-root user with no fixed UID, so
+# fsGroup is what actually makes those volumes writable/readable for them —
+# Kubernetes adds this GID as a supplementary group to every container in
+# the pod and chgrp's each volume to it, regardless of the container's UID.
+podSecurityContext:
+  fsGroup: 1000
 
 # Only needed if the app is granted S3 access via IRSA (IAM Roles for
 # Service Accounts) instead of node instance-profile credentials.

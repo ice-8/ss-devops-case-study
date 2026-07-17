@@ -41,40 +41,73 @@ def _valid_id(record_id: str) -> bool:
     return bool(record_id) and "/" not in record_id and record_id not in (".", "..")
 
 
+def _write_local(record_id: str, body: bytes) -> None:
+    os.makedirs(RECORDS_DIR, exist_ok=True)
+    with open(os.path.join(RECORDS_DIR, record_id), "wb") as f:
+        f.write(body)
+
+
 def _write(record_id: str, body: bytes) -> None:
-    if S3_BUCKET:
+    if not S3_BUCKET:
+        _write_local(record_id, body)
+        return
+
+    try:
         _s3().put_object(
             Bucket=S3_BUCKET, Key=RECORDS_PREFIX + record_id, Body=body,
             ContentType="application/json",
         )
-    else:
-        os.makedirs(RECORDS_DIR, exist_ok=True)
-        with open(os.path.join(RECORDS_DIR, record_id), "wb") as f:
-            f.write(body)
+    except Exception:
+        # Upload must still complete even if S3 is misconfigured/unreachable
+        # (credentials, permissions, network) — fall back to local disk so
+        # the user gets a result page rather than a 500.
+        logger.warning("S3 record write failed, falling back to local disk", exc_info=True)
+        _write_local(record_id, body)
+
+
+def _read_local(record_id: str) -> bytes:
+    with open(os.path.join(RECORDS_DIR, record_id), "rb") as f:
+        return f.read()
 
 
 def _read(record_id: str) -> dict | None:
     if not _valid_id(record_id):
         return None
-    try:
-        if S3_BUCKET:
+
+    body = None
+    if S3_BUCKET:
+        try:
             body = _s3().get_object(Bucket=S3_BUCKET, Key=RECORDS_PREFIX + record_id)["Body"].read()
-        else:
-            with open(os.path.join(RECORDS_DIR, record_id), "rb") as f:
-                body = f.read()
-    except Exception:
-        logger.warning("Could not read record %s", record_id, exc_info=True)
-        return None
+        except Exception:
+            pass  # may be a local-fallback record from a prior S3 outage — try local next
+
+    if body is None:
+        try:
+            body = _read_local(record_id)
+        except Exception:
+            if not S3_BUCKET:
+                logger.warning("Could not read record %s", record_id, exc_info=True)
+            return None
+
     return json.loads(body)
 
 
 def _list_ids() -> list[str]:
+    ids = set()
     if S3_BUCKET:
-        resp = _s3().list_objects_v2(Bucket=S3_BUCKET, Prefix=RECORDS_PREFIX)
-        ids = [obj["Key"][len(RECORDS_PREFIX):] for obj in resp.get("Contents", [])]
+        try:
+            resp = _s3().list_objects_v2(Bucket=S3_BUCKET, Prefix=RECORDS_PREFIX)
+            ids.update(obj["Key"][len(RECORDS_PREFIX):] for obj in resp.get("Contents", []))
+        except Exception:
+            logger.warning("Could not list S3 records", exc_info=True)
     else:
         os.makedirs(RECORDS_DIR, exist_ok=True)
-        ids = os.listdir(RECORDS_DIR)
+
+    # Always check local too — write-fallback records (from an S3 outage at
+    # upload time) only ever land here, and list_ids must surface them.
+    if os.path.isdir(RECORDS_DIR):
+        ids.update(os.listdir(RECORDS_DIR))
+
     return sorted(ids, reverse=True)  # timestamp-prefixed -> newest first
 
 

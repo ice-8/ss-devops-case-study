@@ -49,3 +49,25 @@ def test_rejects_path_traversal_ids(tmp_path, monkeypatch):
 
     for bad_id in ["../../etc/passwd", "..", ".", ""]:
         assert records.get_processed_file(bad_id) is None
+
+
+def test_s3_write_failure_falls_back_to_local_and_stays_readable(tmp_path, monkeypatch):
+    # S3_BUCKET configured but every S3 call fails (credentials/permissions/
+    # network) — save must not raise (no 500 on /upload), and the record
+    # must still show up via get/list afterward (via the local fallback).
+    monkeypatch.setattr(records, "RECORDS_DIR", str(tmp_path))
+    monkeypatch.setattr(records, "S3_BUCKET", "spidersilk-processed-files")
+
+    def _broken_s3():
+        raise RuntimeError("simulated S3 outage")
+
+    monkeypatch.setattr(records, "_s3", _broken_s3)
+
+    record_id = records.save_processed_file("soh.csv", ROWS, SUMMARY, None, "skipped: no AWS credentials")
+
+    record = records.get_processed_file(record_id)
+    assert record is not None
+    assert record["filename"] == "soh.csv"
+
+    files = records.list_processed_files()
+    assert [f["id"] for f in files] == [record_id]
