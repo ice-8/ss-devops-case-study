@@ -84,17 +84,10 @@ Builds multi-arch (amd64+arm64) via buildx. Set
 
 ## kops cluster
 
-Config-only in this repo — see [`infra/kops/README.md`](infra/kops/README.md)
-for bring-up, teardown, and troubleshooting.
+Provision cluster [`infra/kops/README.md`](infra/kops/README.md).
+Deploy App [`infra/ansible/README.md`](infra/ansible/README.md)
 
 ## S3 + Glacier
 
 Not applied in this repo — see [`infra/s3/README.md`](infra/s3/README.md)
 for `terraform apply` / `aws-cli` instructions and the app's IAM policy.
-
-## Notes
-
-- App: Python 3.12 / Flask, `boto3`, SQLite for history, `gunicorn`.
-- CSV format: unheadered `"sku","description","price"` (see `task/soh-1-.csv`).
-- Validated locally: `helm lint`/`template`, `terraform validate`, a real
-  `ansible-playbook` run. `kops` itself wasn't run, per the brief.

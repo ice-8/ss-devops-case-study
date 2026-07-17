@@ -10,6 +10,9 @@ spec:
   machineType: t3.medium
   minSize: 0
   maxSize: 10
+  instanceMetadata:
+    httpPutResponseHopLimit: 2
+    httpTokens: required
   subnets:
     - eu-west-1a
     - eu-west-1b

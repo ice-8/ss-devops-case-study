@@ -114,8 +114,3 @@ flowchart TB
   HPA-scaled replicas. A production version would move this to RDS/DynamoDB
   or a ReadWriteMany volume; kept simple here since the brief only asks the
   app to "show previously processed files," not guarantee durability.
-- **S3 credentials**: the app reads AWS credentials from its environment
-  (instance profile / IRSA in-cluster, or `aws configure` locally). No
-  credentials are baked into the image or repo.
-- **kops cluster**: config-only, per the brief ("not expecting to have
-  running cluster") — validated as well-formed YAML, not applied.

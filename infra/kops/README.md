@@ -27,7 +27,7 @@ per-ASG config needed.
 
 ## SSH (22) / API (443) access
 
-Open to `0.0.0.0/0` for testing. Scope down in `cluster.yaml` for production.
+Open to `0.0.0.0/0` for testing. Set appropriate in `cluster.yaml` for production.
 
 ## Bring-up
 
@@ -90,3 +90,16 @@ credentials yet (kops doesn't use basic auth). Run
 Worker nodes are `amd64`; a plain `docker build` on Apple Silicon only
 targets `arm64`. Use `scripts/build-and-push.sh` (builds multi-arch via
 `buildx`) instead of a manual `docker build`/`push`.
+
+**App shows "S3 status: skipped: no AWS credentials" in-cluster** (bucket is
+configured, so this is boto3 finding zero credentials, not a permissions
+error) — almost always the EC2 metadata service (IMDS) hop limit. Default
+`HttpPutResponseHopLimit` is 1; a pod's request to `169.254.169.254` is 2
+hops, so it never reaches IMDS even though the node role has the right S3
+policy (`additionalPolicies.node` in `cluster.yaml`). Both worker IGs set
+`instanceMetadata.httpPutResponseHopLimit: 2` to fix this — if you added
+that after nodes already existed, it needs a roll-out:
+```bash
+kops update cluster --name spidersilk.k8s.local --yes
+kops rolling-update cluster --yes
+```

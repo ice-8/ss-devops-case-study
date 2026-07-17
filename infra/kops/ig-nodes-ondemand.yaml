@@ -10,6 +10,12 @@ spec:
   machineType: t3.medium
   minSize: 2
   maxSize: 6
+  # Default hop limit (1) blocks pods from reaching IMDS for the node-role S3
+  # credentials in additionalPolicies.node (cluster.yaml) — pod traffic to
+  # 169.254.169.254 is 2 hops, not 1. See infra/kops/README.md Troubleshooting.
+  instanceMetadata:
+    httpPutResponseHopLimit: 2
+    httpTokens: required
   subnets:
     - eu-west-1a
     - eu-west-1b
